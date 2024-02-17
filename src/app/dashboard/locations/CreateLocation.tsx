@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -11,17 +11,17 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { useAdmin } from '@/stores/useAdmin'
+} from "@/components/ui/sheet";
+import { useAdmin } from "@/stores/useAdmin";
 
 export default function CreateLocation() {
   const { addLocation }: any = useAdmin();
-  const [name, setname] = useState("")
-  const [pincode, setpincode] = useState("")
-  const [deliveryCharge, setdeliveryCharge] = useState("")
-  const [location, setlocation] = useState("")
+  const [name, setname] = useState("");
+  const [pincode, setpincode] = useState("");
+  const [deliveryCharge, setdeliveryCharge] = useState("");
+  const [location, setlocation] = useState("");
   return (
-    <main className='overflow-y-auto max-h-full'>
+    <main className="overflow-y-auto max-h-full">
       <SheetHeader>
         <SheetTitle>create new delivery location</SheetTitle>
         <SheetDescription>
@@ -34,48 +34,76 @@ export default function CreateLocation() {
         </Label>
         <Input
           id="name"
-          placeholder='e.g : city etc..'
+          placeholder="e.g : city etc.."
           value={name}
-          onChange={(e) => { setname(e.target.value) }} className="col-span-3"
-          autoComplete={'off'}
+          onChange={(e) => {
+            setname(e.target.value);
+          }}
+          className="col-span-3"
+          autoComplete={"off"}
         />
-        <Label htmlFor="location" className="text-left"> Location</Label>
+        <Label htmlFor="location" className="text-left">
+          {" "}
+          Location
+        </Label>
         <Input
           id="location"
-          placeholder='e.g : delhi ncr etc..'
+          placeholder="e.g : delhi ncr etc.."
           value={location}
-          onChange={(e) => { setlocation(e.target.value) }} className="col-span-3"
-          autoComplete={'off'}
+          onChange={(e) => {
+            setlocation(e.target.value);
+          }}
+          className="col-span-3"
+          autoComplete={"off"}
         />
-        <Label htmlFor="pincode" className="text-left"> Pincode</Label>
+        <Label htmlFor="pincode" className="text-left">
+          {" "}
+          Pincode
+        </Label>
         <Input
-          type='number'
+          type="number"
           id="pincode"
-          placeholder='e.g : 888888 etc..'
+          placeholder="e.g : 888888 etc.."
           value={pincode}
-          onChange={(e) => { setpincode(e.target.value) }} className="col-span-3"
-          autoComplete={'off'}
+          onChange={(e) => {
+            setpincode(e.target.value);
+          }}
+          className="col-span-3"
+          autoComplete={"off"}
         />
-        <Label htmlFor="deliverycharge" className="text-left"> Delivery Charge</Label>
+        <Label htmlFor="deliverycharge" className="text-left">
+          {" "}
+          Delivery Charge
+        </Label>
         <Input
-          type='number'
+          type="number"
           id="deliverycharge"
-          placeholder='e.g : 50 etc..'
+          placeholder="e.g : 50 etc.."
           value={deliveryCharge}
-          onChange={(e) => { setdeliveryCharge(e.target.value) }} className="col-span-3"
-          autoComplete={'off'}
+          onChange={(e) => {
+            setdeliveryCharge(e.target.value);
+          }}
+          className="col-span-3"
+          autoComplete={"off"}
         />
       </div>
       <SheetFooter>
         <SheetClose>
           <Button
             type="submit"
-            onClick={() => addLocation({ name, pincode: +pincode, deliveryCharge: +deliveryCharge, location })}
+            onClick={() =>
+              addLocation({
+                name,
+                pincode: +pincode,
+                deliveryCharge: +deliveryCharge,
+                location,
+              })
+            }
           >
             Create location
           </Button>
         </SheetClose>
       </SheetFooter>
     </main>
-  )
+  );
 }

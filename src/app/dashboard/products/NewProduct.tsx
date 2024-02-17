@@ -27,7 +27,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 export default function NewProduct() {
   const { addProducts, allCategory, allLocations } = useAdmin();
-  const [deliveryLocations, setDeliveryLocations] = useState<string[]>([]);
   const [productData, setProductData] = useState({
     name: "",
     description: "",
@@ -41,6 +40,14 @@ export default function NewProduct() {
     multiPack: false,
     howToUse: "",
     gstRate: 0,
+    discount: {
+      percentage: 0,
+      newAmount: 0,
+    },
+    size: {
+      amount: 0,
+      unit: "",
+    },
   });
 
   const handleChange = (property: any, value: any) => {
@@ -87,7 +94,7 @@ export default function NewProduct() {
               Product Price
             </Label>
             <Input
-              type="number"
+              type="string"
               id="productPrice"
               placeholder="Enter product price"
               value={productData.price}
@@ -101,7 +108,7 @@ export default function NewProduct() {
               Product Stock
             </Label>
             <Input
-              type="number"
+              type="string"
               id="productStock"
               placeholder="Enter product stock"
               value={productData.stock}
@@ -111,6 +118,102 @@ export default function NewProduct() {
             />
           </div>
         </div>
+        <h1 className="text-sm text-gray-500">
+          Size: Add the amount and select the unit
+        </h1>
+        <div className="grid grid-cols-2 gap-3 w-full">
+          <div>
+            <Label htmlFor="productPrice" className="text-left">
+              Size
+            </Label>
+            <Input
+              type="string"
+              id="productPrice"
+              placeholder="Enter product price"
+              value={+productData.size.amount}
+              onChange={(e) =>
+                handleChange("size", {
+                  amount: +e.target.value,
+                  unit: productData.size.unit,
+                })
+              }
+              className="w-full"
+              autoComplete="off"
+            />
+          </div>
+          <div>
+            <Label htmlFor="productStock" className="text-left">
+              Unit
+            </Label>
+            <Select
+              onValueChange={(value) => {
+                handleChange("size", {
+                  amount: productData.size.amount,
+                  unit: value,
+                });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a unit" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {["kg", "g", "l", "ml", "unit"].map((unit: any) => (
+                    <SelectItem value={unit} key={unit}>
+                      <SelectLabel>{unit.toUpperCase()}</SelectLabel>
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <Label htmlFor="productPrice" className="text-left">
+          Product Discount %
+        </Label>
+        <h1 className="text-sm text-gray-500">
+          Enter the discount percentage and the new amount will be calculated
+          automatically
+        </h1>
+        <Input
+          type="string"
+          id="productDiscount"
+          placeholder="Enter product price"
+          value={productData.discount.percentage}
+          onChange={(e) =>
+            handleChange("discount", {
+              percentage: +e.target.value,
+              newAmount:Math.floor(productData.price - (productData.price * +e.target.value) / 100),
+            })
+          }
+          className="w-full"
+          autoComplete="off"
+        />
+        <h1>Or</h1>
+        <h1 className="text-sm text-gray-500">
+          Enter the new amount and the discount percentage will be calculated
+          automatically
+        </h1>
+        <Input
+          type="string"
+          id="productDiscount"
+          placeholder="Enter product price"
+          value={productData.discount.newAmount}
+          onChange={(e) =>
+            handleChange("discount", {
+              percentage:
+               Math.floor( ((productData.price - +e.target.value) / productData.price) * 100),
+              newAmount: +e.target.value,
+            })
+          }
+          className="w-full"
+          autoComplete="off"
+        />
+        {productData.discount.percentage > 0 && (
+          <h1 className="text-sm text-gray-200">
+            New Amount: ₹ {productData.discount.newAmount}
+          </h1>
+        )}
         <Label htmlFor="productPrice" className="text-left">
           Product Images
         </Label>
@@ -123,8 +226,8 @@ export default function NewProduct() {
             const files = e.target.files;
             if (files) {
               handleChange("images", files);
-            }else{
-              alert('No files selected')
+            } else {
+              alert("No files selected");
             }
           }}
           className="w-full"
@@ -227,12 +330,11 @@ export default function NewProduct() {
           GST Rate
         </Label>
         <Input
-          type="number"
+          type="string"
           id="productGSTRate"
           placeholder="Enter product GST rate"
           value={productData.gstRate}
           defaultValue={18}
-
           onChange={(e) => handleChange("gstRate", +e.target.value)}
           className="col-span-3"
           autoComplete="off"

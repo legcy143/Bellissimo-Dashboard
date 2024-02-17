@@ -89,15 +89,14 @@ export const useAdmin = create<AdminState>((set: any) => ({
     },
     addProducts: async (data: any) => {
         try {
-            const requiredFields = ["name", "price", "category", "images", "description", "stock", "deliveryLocations", "eanCode", "hsnCode", "multiPack", "howToUse", "gstRate"]
-            if (!requiredFields.every(e => data[e])) {
-                return toast.error(`
-                Please fill all required fields
-                Expected fields: ${requiredFields.join(", ")}
-                Missing fields: ${requiredFields.filter(e => !data[e]).join(", ")}`
-                )
-            }
-            set({ isCategoryLoading: true })
+            // const requiredFields = ["name", "price", "category", "images", "description", "stock", "deliveryLocations", "eanCode", "hsnCode", "multiPack", "howToUse", "gstRate", "size"]
+            // if (!requiredFields.every(e => data[e])) {
+            //     return toast.error(`
+            //     Please fill all required fields
+            //     Expected fields: ${requiredFields.join(", ")}
+            //     Missing fields: ${requiredFields.filter(e => !data[e]).join(", ")}`
+            //     )
+            // }
             const images = await uploadMultipleFiles(data.images)
             console.log("images ", images)
             const dataToBeSent = { ...data, images }
@@ -145,8 +144,8 @@ export const useAdmin = create<AdminState>((set: any) => ({
             set({ isCategoryLoading: true })
             let res = await axios.delete(`${API_URL}/products/delete/${_id}`)
             if (res.data.status == "OK") {
-                let prevarr: any = useAdmin?.getState()?.allCategory;
-                let newArr = prevarr.filter((e: any) => {
+                const prevarr: any = useAdmin?.getState()?.allProducts;
+                const newArr = prevarr.filter((e: any) => {
                     return e = e._id != _id
                 });
                 set({
@@ -286,7 +285,7 @@ export const useAdmin = create<AdminState>((set: any) => ({
     },
     addLocation: async (data: any) => {
         try {
-            const requiredFields = ["name", "location", "pincode", "deliveryCharge"]
+            const requiredFields = ["name", "location", "pincode"]
             if (!requiredFields.every(e => data[e])) {
                 return toast.error(`
                 Please fill all required fields
