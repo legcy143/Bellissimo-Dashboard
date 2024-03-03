@@ -76,8 +76,8 @@ export default function Products() {
             <TableHead>stock</TableHead>
             <TableHead>reviews</TableHead>
             <TableHead>variants</TableHead>
-            <TableHead>eanCode</TableHead>
-            <TableHead>hsnCode</TableHead>
+            {/* <TableHead>eanCode</TableHead>
+            <TableHead>hsnCode</TableHead> */}
             <TableHead>size</TableHead>
             <TableHead>Locations</TableHead>
             <TableHead>Created At</TableHead>
@@ -93,7 +93,7 @@ export default function Products() {
                 <TableRow key={e._id}>
                   <TableCell className="font-medium">{i + 1}</TableCell>
                   {/* <TableCell className="font-medium select-text">{e._id}</TableCell> */}
-                  <TableCell>{e.name}</TableCell>
+                  <TableCell className="max-w-44 truncate">{e.name}</TableCell>
                   <TableCell className="flex gap-2 items-center justify-center">
                     {e.discount?.percentage > 0 ? (
                       <p className="line-through text-white">{e.price}</p>
@@ -116,8 +116,8 @@ export default function Products() {
                   <TableCell>{e.stock}</TableCell>
                   <TableCell>{e.reviews.length}</TableCell>
                   <TableCell>{e.variants.length}</TableCell>
-                  <TableCell>{e.eanCode}</TableCell>
-                  <TableCell>{e.hsnCode}</TableCell>
+                  {/* <TableCell>{e.eanCode}</TableCell>
+                  <TableCell>{e.hsnCode}</TableCell> */}
                   <TableCell>
                     {e?.size?.amount}
                     {e?.size?.unit.toUpperCase()}

@@ -68,6 +68,7 @@ export default function Categories() {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">S.No</TableHead>
+            <TableHead>Icon</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead className="text-right">Action</TableHead>
@@ -82,7 +83,12 @@ export default function Categories() {
                 <TableRow key={e._id}>
                   <TableCell className="font-medium">{i + 1}</TableCell>
                   {/* <TableCell className="font-medium select-text">{e._id}</TableCell> */}
-                  <TableCell>{e.name}</TableCell>
+                  <TableCell> 
+                    <img src={e?.icon} className="w-10 aspect-square object-cover rounded-full" alt="" />
+                    </TableCell>
+                  <TableCell> 
+                    {e.name}
+                    </TableCell>
                   <TableCell>{new Date(e.createdAt).toDateString()}</TableCell>
                   <TableCell className="text-right">
                     <div className="ml-auto flex items-center w-fit justify-center gap-3">
