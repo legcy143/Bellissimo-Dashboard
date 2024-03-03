@@ -12,9 +12,10 @@ export default function Dashboard() {
             { title: "orders", length: allOrders.length },
         ]
     )
+ 
+    
     return (
         <main>
-            comming soon . . .
             <section className='gap-5 p-5 flex'>
                 {/* {miniDetail?.map((e, i) => {
                     return <div

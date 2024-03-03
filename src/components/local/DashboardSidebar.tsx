@@ -7,6 +7,8 @@ import { PiUsersFill } from "react-icons/pi";
 import { IoLocation } from "react-icons/io5";
 import { HiSpeakerphone } from "react-icons/hi";
 import { HiViewGridAdd } from "react-icons/hi";
+import { FaRegImages } from "react-icons/fa6";
+import { BiSolidOffer } from "react-icons/bi";
 
 export default function DashboardSidebar() {
     const router = useRouter();
@@ -17,6 +19,11 @@ export default function DashboardSidebar() {
             pathname: "Dashboard",
             path: "/dashboard",
             icon: <MdDashboard />
+        },
+        {
+            pathname: "carousal",
+            path: "/dashboard/carousal",
+            icon: <FaRegImages />
         },
         {
             pathname: "orders",
@@ -42,6 +49,11 @@ export default function DashboardSidebar() {
             pathname: "delivery location",
             path: "/dashboard/locations",
             icon: <IoLocation />
+        },
+        {
+            pathname: "offers",
+            path: "/dashboard/offers",
+            icon: <BiSolidOffer />
         },
         {
             pathname: "marketing",

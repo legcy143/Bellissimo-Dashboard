@@ -4,20 +4,19 @@ import axios from "axios"
 import { API_URL } from "@/constants/API_URL"
 import { uploadMultipleFiles, uploadSingleFile } from "@/utils/upload"
 type AdminState = {
-    isProductsLoading: boolean,
+    isLoading: boolean,
+    crousalImage:any[],
+    allOffers:any[],
     allProducts: any[],
-    isOrdersLoading: boolean,
     allOrders: any[],
-    isUsersLoading: boolean,
     allUsers: any[],
-    isCategoryLoading: boolean,
     allCategory: any[],
-    isLocationLoading: boolean,
     allLocations: any[],
     test: any[],
-    isUploadLoading: boolean,
     uploadedUrl: string,
 
+    AddOffers: (data:any) => void,
+    UpdateOffers: (data:any) => void,
     fetchAllUsers: () => void,
     fetchAllProducts: () => void,
     addProducts: (data: any) => void,
@@ -36,24 +35,165 @@ type AdminState = {
 }
 
 export const useAdmin = create<AdminState>((set: any) => ({
-    isProductsLoading: false,
+    isLoading: false,
+    crousalImage : [],
+    allOffers : [],
     allProducts: [],
-    isOrdersLoading: false,
     allOrders: [],
-    isUsersLoading: false,
     allUsers: [],
-    isCategoryLoading: false,
     allCategory: [],
-    isLocationLoading: false,
     allLocations: [],
     test: [1],
-    isUploadLoading: false,
     uploadedUrl: "",
+
+    // offers
+    fetchOffers: async () => {
+        try {
+            set({ isLoading: true })
+            let res = await axios.get(`${API_URL}/home/offers`)
+            if (res.data.status == "OK") {
+                console.log("fetch offers " , res.data)
+                set({
+                    allOffers: res.data.data
+                })
+            }
+        } catch (error) {
+            toast.error("server issue")
+        }
+        finally {
+            set({ isLoading: false })
+        }
+    },
+    DeleteOffers: async (_id:string) => {
+        try {
+            console.log("dele ")
+            set({ isLoading: true })
+            let res = await axios.delete(`${API_URL}/home/offers/${_id}`)
+                let prev = useAdmin.getState().allOffers;
+                let newData = prev.filter((e:any)=>e = e._id !== _id)
+                set({
+                    allOffers: newData
+                })
+                toast.success("offer deleted succsfully")
+        } catch (error) {
+            toast.error("server issue")
+        }
+        finally {
+            set({ isLoading: false })
+        }
+    },
+    AddOffers: async (data:any) => {
+        try {
+            set({ isLoading: true })
+            if (data.image) {
+                const image = await uploadSingleFile(data.image)
+                data = { ...data, image }
+            }
+            let res = await axios.post(`${API_URL}/home/offers` , data)
+            if (res.data.status == "OK") {
+                console.log("res",res.data)
+                let prev = useAdmin.getState().allOffers;
+                set({
+                    allOffers: [...prev , res.data.data]
+                })
+                toast.success("offer added succesfully")
+            }
+        } catch (error) {
+            console.log("error " ,error)
+            toast.error("server issue")
+        }
+        finally {
+            set({ isLoading: false })
+        }
+    },
+    UpdateOffers: async (data:any) => {
+        try {
+            set({ isLoading: true })
+            console.log("Data ",data)
+            if (data?.image) {
+                const image = await uploadSingleFile(data.image)
+                data = { ...data, image }
+            }
+            let res = await axios.put(`${API_URL}/home/offers/${data?._id}` , data)
+            if (res.data.status == "OK") {
+                console.log("res",res.data)
+                let prev = useAdmin.getState().allOffers;
+                let filterdData = prev.filter((e)=>e = e._id != data._id)
+                set({
+                    allOffers: [...filterdData , data]
+                })
+                toast.success("offer added succesfully")
+            }
+        } catch (error) {
+            console.log("error " ,error)
+            toast.error("server issue")
+        }
+        finally {
+            set({ isLoading: false })
+        }
+    },
+
+    // caroousal
+    fetchcarousel: async () => {
+        try {
+            set({ isLoading: true })
+            let res = await axios.get(`${API_URL}/home/carousel`)
+            if (res.data.status == "OK") {
+                set({
+                    crousalImage: res.data.data
+                })
+            }
+        } catch (error) {
+            toast.error("server issue")
+        }
+        finally {
+            set({ isLoading: false })
+        }
+    },
+    Deletecarousel: async (_id:string) => {
+        try {
+            set({ isLoading: true })
+            let res = await axios.delete(`${API_URL}/home/carousel/${_id}`)
+                let prev = useAdmin.getState().crousalImage;
+                let newData = prev.filter((e)=>e = e._id !== _id)
+                set({
+                    crousalImage: newData
+                })
+                toast.success("image deleted succsfully")
+        } catch (error) {
+            toast.error("server issue")
+        }
+        finally {
+            set({ isLoading: false })
+        }
+    },
+    Addcarousel: async (data:any) => {
+        try {
+            if (data.image) {
+                const image = await uploadSingleFile(data.image)
+                data = { ...data, image }
+            }
+            set({ isLoading: true })
+            let res = await axios.post(`${API_URL}/home/carousel` ,data)
+            if (res.data.status == "OK") {
+                let prev = useAdmin.getState().crousalImage;
+                set({
+                    crousalImage: [...prev , res.data.data]
+                })
+                toast.success("image upload succesfully")
+            }
+        } catch (error) {
+            toast.error("server issue")
+        }
+        finally {
+            set({ isLoading: false })
+        }
+    },
 
     // manage users api
     fetchAllUsers: async () => {
         try {
-            set({ isUsersLoading: true })
+            set({ isLoading: true })
             let res = await axios.get(`${API_URL}/users/all`)
             if (res.data.status == "OK") {
                 set({
@@ -64,14 +204,14 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isUsersLoading: false })
+            set({ isLoading: false })
         }
     },
 
     //manage Prodcuts api
     fetchAllProducts: async () => {
         try {
-            set({ isProductsLoading: true })
+            set({ isLoading: true })
             let res = await axios.get(`${API_URL}/products/all`)
             console.log("res products ", res)
             if (res.data.status == "OK") {
@@ -84,7 +224,7 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isProductsLoading: false })
+            set({ isLoading: false })
         }
     },
     addProducts: async (data: any) => {
@@ -113,12 +253,12 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isCategoryLoading: false })
+            set({ isLoading: false })
         }
     },
     updateProducts: async (data: any, _id: any) => {
         try {
-            set({ isCategoryLoading: true })
+            set({ isLoading: true })
             let res = await axios.patch(`${API_URL}/products/update/${_id}`, data)
             if (res.data.status == "OK") {
                 let prevarr: any = useAdmin?.getState()?.allProducts;
@@ -136,12 +276,12 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isCategoryLoading: false })
+            set({ isLoading: false })
         }
     },
     deleteProducts: async (_id: any) => {
         try {
-            set({ isCategoryLoading: true })
+            set({ isLoading: true })
             let res = await axios.delete(`${API_URL}/products/delete/${_id}`)
             if (res.data.status == "OK") {
                 const prevarr: any = useAdmin?.getState()?.allProducts;
@@ -157,7 +297,7 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isCategoryLoading: false })
+            set({ isLoading: false })
         }
     },
 
@@ -177,7 +317,7 @@ export const useAdmin = create<AdminState>((set: any) => ({
     // categories apis
     fetchAllCategory: async () => {
         try {
-            set({ isCategoryLoading: true })
+            set({ isLoading: true })
             let res = await axios.get(`${API_URL}/category/all`)
             if (res.data.status == "OK") {
                 set({
@@ -189,7 +329,7 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isCategoryLoading: false })
+            set({ isLoading: false })
         }
     },
     addCategory: async (data: any) => {
@@ -201,7 +341,7 @@ export const useAdmin = create<AdminState>((set: any) => ({
                 Expected fields: ${requiredFields.join(", ")}
                 `)
             }
-            set({ isCategoryLoading: true })
+            set({ isLoading: true })
             const icon = await uploadSingleFile(data.icon)
             const dataToBeSent = { ...data, icon }
             let res = await axios.post(`${API_URL}/category/create`, dataToBeSent)
@@ -216,12 +356,12 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isCategoryLoading: false })
+            set({ isLoading: false })
         }
     },
     updateCategory: async (data: any, _id: any) => {
         try {
-            set({ isCategoryLoading: true })
+            set({ isLoading: true })
             if (data.icon) {
                 const icon = await uploadSingleFile(data.icon)
                 data = { ...data, icon }
@@ -243,12 +383,12 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isCategoryLoading: false })
+            set({ isLoading: false })
         }
     },
     deleteCategory: async (_id: any) => {
         try {
-            set({ isCategoryLoading: true })
+            set({ isLoading: true })
             let res = await axios.delete(`${API_URL}/category/delete/${_id}`)
             if (res.data.status == "OK") {
                 let prevarr: any = useAdmin?.getState()?.allCategory;
@@ -264,12 +404,12 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isCategoryLoading: false })
+            set({ isLoading: false })
         }
     },
     fetchAllLocation: async () => {
         try {
-            set({ isLocationLoading: true })
+            set({ isLoading: true })
             let res = await axios.get(`${API_URL}/delivery/all`)
             if (res.data.status == "OK") {
                 set({
@@ -280,7 +420,7 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isLocationLoading: false })
+            set({ isLoading: false })
         }
     },
     addLocation: async (data: any) => {
@@ -293,7 +433,7 @@ export const useAdmin = create<AdminState>((set: any) => ({
                 Missing fields: ${requiredFields.filter(e => !data[e]).join(", ")}`
                 )
             }
-            set({ isLocationLoading: true })
+            set({ isLoading: true })
             let res = await axios.post(`${API_URL}/delivery/create`, data)
             if (res.data.status == "OK") {
                 let prevarr: any = useAdmin?.getState()?.allLocations
@@ -306,12 +446,12 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isLocationLoading: false })
+            set({ isLoading: false })
         }
     },
     updateLocation: async (data: any, _id: any) => {
         try {
-            set({ isLocationLoading: true })
+            set({ isLoading: true })
             let res = await axios.patch(`${API_URL}/delivery/update/${_id}`, data)
             if (res.data.status == "OK") {
                 let prevarr: any = useAdmin?.getState()?.allLocations;
@@ -332,12 +472,12 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isLocationLoading: false })
+            set({ isLoading: false })
         }
     },
     deleteLocation: async (_id: any) => {
         try {
-            set({ isLocationLoading: true })
+            set({ isLoading: true })
             let res = await axios.delete(`${API_URL}/delivery/delete/${_id}`)
             if (res.data.status == "OK") {
                 let prevarr: any = useAdmin?.getState()?.allLocations;
@@ -353,22 +493,23 @@ export const useAdmin = create<AdminState>((set: any) => ({
             toast.error("server issue")
         }
         finally {
-            set({ isLocationLoading: false })
+            set({ isLoading: false })
         }
     },
     uploadImage: async (image: File) => {
         try {
-            set({ isUploadLoading: true })
+            set({ isLoading: true })
             let formData = new FormData();
             formData.append("image", image)
             let res = await axios.post(`${API_URL}/upload/single`, formData)
             if (res.data.status == "OK") {
                 toast.success("uploaded successfully")
+                set({ isLoading: false, uploadedUrl: res.data.data })
+                return res.data.data
             }
-            set({ isUploadLoading: false, uploadedUrl: res.data.data })
         } catch (error) {
             toast.error("server issue")
-            set({ isUploadLoading: false })
+            set({ isLoading: false })
         }
     }
 }))
